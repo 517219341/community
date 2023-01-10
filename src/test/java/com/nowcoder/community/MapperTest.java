@@ -14,7 +14,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Date;
 import java.sql.SQLOutput;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -76,5 +78,13 @@ public class MapperTest {
 
         int rows = discussPostMapper.selectDiscussPostRows(149);
         System.out.println(rows);
+
+    }
+
+    public void test(){
+        Map<Character,Integer> map = new HashMap();
+        map.getOrDefault('1',0);
+        String s = new String("123");
+        s.toCharArray();
     }
 }
