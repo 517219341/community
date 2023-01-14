@@ -2,8 +2,12 @@ package com.nowcoder.community.controller;
 
 //import ch.qos.logback.core.model.Model;
 import com.nowcoder.community.service.AlphaService;
+import com.nowcoder.community.util.CommunityUtil;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.websocket.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
@@ -148,6 +152,45 @@ public class AlphaController {
         list.add(map);
 
         return list;
+    }
+
+    //cookie实列
+
+    @RequestMapping(path = "/cookie/set" , method = RequestMethod.GET)
+    @ResponseBody
+    public String setCookie(HttpServletResponse response) {
+        //创建Cookie
+        Cookie cookie = new Cookie("code", CommunityUtil.generateUUID());
+        //设置生效范围
+        cookie.setPath("/community/alpha");
+        //设置Cookie生存时间,让cookie不止存在内存（关闭浏览器就没了）
+        cookie.setMaxAge(60 * 10);//单位 ：S
+        //发送cookie
+        response.addCookie(cookie);
+
+        return "set cookie";
+    }
+    @RequestMapping(path = "/cookie/get" , method = RequestMethod.GET)
+    @ResponseBody
+    public String getCookie(@CookieValue("code") String code) { //获得相对应的Cookie
+        System.out.println(code);
+        return "get cookie";
+    }
+
+    @RequestMapping(path = "/session/set" , method = RequestMethod.GET)
+    @ResponseBody
+    public String setSession(HttpSession session) { //SpringBoot，自动创建注入
+        session.setAttribute("id", 1);
+        session.setAttribute("name", "LiHua");
+        return "set session";
+    }
+
+    @RequestMapping(path = "/session/get" , method = RequestMethod.GET)
+    @ResponseBody
+    public String getSession(HttpSession session) { //SpringBoot，自动创建注入
+        System.out.println(session.getAttribute("id"));
+        System.out.println(session.getAttribute("name"));
+        return "get session";
     }
 }
 

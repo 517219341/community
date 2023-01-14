@@ -64,4 +64,5 @@ class CommunityApplicationTests implements ApplicationContextAware {
 		System.out.println(alphaDao.select());
 		System.out.println(alphaDao1.select());
 	}
+
 }
