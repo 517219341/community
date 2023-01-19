@@ -10,6 +10,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ContextConfiguration(classes = CommunityApplication.class)
@@ -35,4 +38,6 @@ public class MailTest {
 
         mailClient.sendMail("517219341@qq.com","Html",content);
     }
+
+
 }
