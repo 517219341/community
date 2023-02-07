@@ -23,7 +23,7 @@
     </select>
 
     <select id="selectCountByEntity" resultType="int">
-        select count(id)
+        select count(*)
         from comment
         where status = 0
         and entity_type = #{entityType}

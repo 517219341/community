@@ -2,7 +2,10 @@ package com.nowcoder.community.controller;
 
 import com.nowcoder.community.annotation.LoginRequired;
 import com.nowcoder.community.entity.User;
+import com.nowcoder.community.service.FollowService;
+import com.nowcoder.community.service.LikeService;
 import com.nowcoder.community.service.UserService;
+import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.CommunityUtil;
 import com.nowcoder.community.util.HostHolder;
 import jakarta.servlet.ServletOutputStream;
@@ -12,12 +15,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.model.IModel;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,7 +31,7 @@ import java.io.OutputStream;
 
 @Controller
 @RequestMapping("/user")
-public class UserController {
+public class UserController implements CommunityConstant {
 
     @Autowired
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -41,10 +46,16 @@ public class UserController {
     private String contextPath;
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @Autowired
-    HostHolder hostHolder;
+    private HostHolder hostHolder;
+
+    @Autowired
+    private LikeService likeService;
+
+    @Autowired
+    private FollowService followService;
 
     //返回设置界面
     @LoginRequired
@@ -152,4 +163,37 @@ public class UserController {
 
         return "redirect:/index";
     }
+
+    // 个人主页
+    @RequestMapping(path = "/profile/{userId}", method = RequestMethod.GET)
+    public String getProfilePage(@PathVariable("userId") int userId, Model model) {
+        User user = userService.findUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("该用户不存在！");
+        }
+
+        // 发送消息
+        model.addAttribute("user",user);
+        // 点赞
+        int count = likeService.findUserLikeCount(userId);
+        model.addAttribute("likeCount",count);
+
+        // 关注数量
+        long followeeCount = followService.findFolloweeCount(userId, ENTITY_TYPE_USER );
+        model.addAttribute("followeeCount",followeeCount);
+        // 粉丝数量
+        long followerCount = followService.findFollowerCount(ENTITY_TYPE_USER, userId);
+        model.addAttribute("followerCount",followerCount);
+        // 是否关注
+        if (hostHolder == null) {
+            model.addAttribute("hasFollowed", false);
+        } else {
+            boolean hasFollow = followService.hasFollowed(hostHolder.getUser().getId(), ENTITY_TYPE_USER, userId);
+            model.addAttribute("hasFollowed", hasFollow);
+        }
+
+        return "/site/profile";
+
+    }
+
 }

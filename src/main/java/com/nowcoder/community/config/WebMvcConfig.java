@@ -4,7 +4,6 @@ import com.nowcoder.community.controller.interceptor.AlphaInterceptor;
 import com.nowcoder.community.controller.interceptor.LoginRequiredIterceptor;
 import com.nowcoder.community.controller.interceptor.LoginTicketInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.ParameterResolutionDelegate;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
